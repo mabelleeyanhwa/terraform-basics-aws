@@ -7,16 +7,7 @@ resource "aws_instance" "example" {
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.instance.id]
 
-  user_data = <<-EOF
-#!/bin/bash
-sudo yum update -y
-sudo yum -y install docker
-sudo service docker start 
-sudo usermod -aG docker ec2-user
-sudo chmod 666 /var/run/docker.sock
-docker version
-docker run --name helloworld -d -p ${var.server_port}:80 nginx
-EOF
+  user_data = data.template_file.user_data.rendered
   tags = {
     Name = "terraform-docker-example"
   }
@@ -44,5 +35,22 @@ resource "aws_security_group" "instance" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+terraform {
+  backend "s3" {
+    bucket         = "terraform-basics-state"
+    key            = "global/s3/terraform.tfstate"
+    region         = "ap-southeast-1"
+    dynamodb_table = "terraform-basics-locks"
+    encrypt        = true
+  }
+}
+
+data "template_file" "user_data" {
+  template = file("user-data.sh")
+  vars = {
+    server_port = var.server_port
   }
 }
