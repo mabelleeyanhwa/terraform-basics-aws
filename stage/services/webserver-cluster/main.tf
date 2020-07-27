@@ -13,12 +13,6 @@ resource "aws_instance" "example" {
   }
 }
 
-variable "server_port" {
-  description = "The port that the server will use for HTTP requests"
-  type        = number
-  default     = 80
-}
-
 resource "aws_security_group" "instance" {
   name = "terraform-docker-example-instance"
 
@@ -41,7 +35,7 @@ resource "aws_security_group" "instance" {
 terraform {
   backend "s3" {
     bucket         = "terraform-basics-state"
-    key            = "global/s3/terraform.tfstate"
+    key            = "stage/services/webserver-cluster/terraform.tfstate"
     region         = "ap-southeast-1"
     dynamodb_table = "terraform-basics-locks"
     encrypt        = true

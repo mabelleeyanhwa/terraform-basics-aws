@@ -33,12 +33,12 @@ resource "aws_dynamodb_table" "terraform_locks" {
   }
 }
 
-output "s3_bucket_arn" {
-  value       = aws_s3_bucket.terraform-state.arn
-  description = "The ARN of the bucket"
-}
-
-output "dynamodb_table_name" {
-  value       = aws_dynamodb_table.terraform_locks.name
-  description = "The name of the DynamoDB table"
+terraform {
+  backend "s3" {
+    bucket         = "terraform-basics-state"
+    key            = "global/s3/terraform.tfstate"
+    region         = "ap-southeast-1"
+    dynamodb_table = "terraform-basics-locks"
+    encrypt        = true
+  }
 }
