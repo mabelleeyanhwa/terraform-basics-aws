@@ -13,13 +13,3 @@ module "cluster" {
   web_server_count = "2"
   public_key_path  = "~/.ssh/id_rsa.pub"
 }
-
-terraform {
-  backend "s3" {
-    bucket         = "terraform-basics-state"
-    key            = "dev/terraform.tfstate"
-    region         = "ap-southeast-1"
-    dynamodb_table = "terraform-basics-locks"
-    encrypt        = true
-  }
-}
