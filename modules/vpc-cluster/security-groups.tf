@@ -1,7 +1,7 @@
 resource "aws_security_group" "intra_node_communication" {
   name        = "intra-node-communication"
   description = "Default security group that allows all instances in the VPC to talk to each other over any port and protocol."
-  vpc_id      = "${aws_vpc.cluster.id}"
+  vpc_id      = aws_vpc.cluster.id
 
   ingress {
     from_port = "0"
@@ -63,7 +63,7 @@ resource "aws_security_group" "nat" {
     security_groups = [aws_security_group.private_instance.id]
   }
 
-  vpc_id = "${aws_vpc.cluster.id}"
+  vpc_id = aws_vpc.cluster.id
 
   tags = {
     Name = "NATSG"
@@ -73,7 +73,7 @@ resource "aws_security_group" "nat" {
 resource "aws_security_group" "private_instance" {
   name        = "private_instance"
   description = "Security group that allows public subnet ingress to private instances on HTTP and HTTPS."
-  vpc_id      = "${aws_vpc.cluster.id}"
+  vpc_id      = aws_vpc.cluster.id
 
   ingress {
     from_port   = var.server_port
@@ -93,7 +93,7 @@ resource "aws_security_group" "private_instance" {
 resource "aws_security_group" "public_ingress" {
   name        = "public_ingress"
   description = "Security group that allows public ingress to instances on HTTP and HTTPS."
-  vpc_id      = "${aws_vpc.cluster.id}"
+  vpc_id      = aws_vpc.cluster.id
 
   //  HTTP
   ingress {
@@ -133,7 +133,7 @@ resource "aws_security_group" "public_ingress" {
 resource "aws_security_group" "public_egress" {
   name        = "-"
   description = "Security group that allows egress to the internet for instances over HTTP and HTTPS."
-  vpc_id      = "${aws_vpc.cluster.id}"
+  vpc_id      = aws_vpc.cluster.id
 
   //  HTTP
   egress {
@@ -156,7 +156,7 @@ resource "aws_security_group" "public_egress" {
 resource "aws_security_group" "ssh_access" {
   name        = "ssh_access"
   description = "Security group that allows public access over SSH."
-  vpc_id      = "${aws_vpc.cluster.id}"
+  vpc_id      = aws_vpc.cluster.id
 
   //  SSH
   ingress {
