@@ -18,7 +18,7 @@ data "aws_ami" "amazon-linux-2" {
 
 resource "aws_launch_configuration" "cluster_node" {
 
-  name_prefix   = "cluster-node-"
+  name_prefix   = "${var.env}-cluster-node-"
   image_id      = "${data.aws_ami.amazon-linux-2.id}"
   instance_type = "t2.micro"
 
@@ -36,7 +36,7 @@ resource "aws_launch_configuration" "cluster_node" {
 }
 
 resource "aws_autoscaling_group" "cluster_node" {
-  name                 = "cluster_node"
+  name                 = "${var.env}-cluster_node"
   min_size             = var.web_server_count
   max_size             = var.web_server_count
   desired_capacity     = var.web_server_count
@@ -51,7 +51,7 @@ resource "aws_autoscaling_group" "cluster_node" {
 
 # A load balancer for the cluster.
 resource "aws_lb" "cluster-alb" {
-  name               = "cluster-alb"
+  name               = "${var.env}-cluster-alb"
   load_balancer_type = "application"
   security_groups = [
     aws_security_group.public_ingress.id,
@@ -62,7 +62,7 @@ resource "aws_lb" "cluster-alb" {
 }
 
 resource "aws_lb_target_group" "asg" {
-  name     = "asg"
+  name     = "${var.env}-asg"
   port     = var.server_port
   protocol = "HTTP"
   vpc_id   = "${aws_vpc.cluster.id}"

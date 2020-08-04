@@ -13,8 +13,7 @@ resource "aws_subnet" "public-subnet" {
   vpc_id            = "${aws_vpc.cluster.id}"
   availability_zone = "${element(keys(var.public_subnets), count.index)}"
   cidr_block        = "${element(values(var.public_subnets), count.index)}"
-  #map_public_ip_on_launch = true
-  depends_on = [aws_internet_gateway.cluster_gateway]
+  depends_on        = [aws_internet_gateway.cluster_gateway]
 }
 
 resource "aws_subnet" "private-subnet" {

@@ -30,3 +30,8 @@ variable "public_key_path" {
   type        = string
   default     = ""
 }
+
+variable "env" {
+  description = "The environment name"
+  default     = "dev"
+}
