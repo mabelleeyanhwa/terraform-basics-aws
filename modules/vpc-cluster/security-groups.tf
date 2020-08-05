@@ -20,12 +20,6 @@ resource "aws_security_group" "intra_node_communication" {
 
 resource "aws_security_group" "nat" {
   count = "${length(var.private_subnets)}"
-  ingress {
-    from_port   = var.server_port
-    to_port     = var.server_port
-    protocol    = "tcp"
-    cidr_blocks = ["${element(values(var.private_subnets), count.index)}"]
-  }
 
   ingress {
     from_port   = 80
@@ -53,14 +47,6 @@ resource "aws_security_group" "nat" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-
-  egress {
-    from_port       = var.server_port
-    to_port         = var.server_port
-    protocol        = "tcp"
-    security_groups = [aws_security_group.private_instance.id]
   }
 
   vpc_id = aws_vpc.cluster.id
@@ -80,13 +66,6 @@ resource "aws_security_group" "private_instance" {
     to_port     = var.server_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["${var.vpc_cidr}"]
   }
 }
 
@@ -147,21 +126,6 @@ resource "aws_security_group" "public_egress" {
   egress {
     from_port   = 443
     to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-//  Security group which allows SSH access to a host. Should not be used in production scenarios
-resource "aws_security_group" "ssh_access" {
-  name        = "ssh_access"
-  description = "Security group that allows public access over SSH."
-  vpc_id      = aws_vpc.cluster.id
-
-  //  SSH
-  ingress {
-    from_port   = 22
-    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
