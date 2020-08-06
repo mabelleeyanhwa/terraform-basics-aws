@@ -18,44 +18,6 @@ resource "aws_security_group" "intra_node_communication" {
   }
 }
 
-resource "aws_security_group" "nat" {
-  count = "${length(var.private_subnets)}"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["${element(values(var.private_subnets), count.index)}"]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["${element(values(var.private_subnets), count.index)}"]
-  }
-
-  egress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  vpc_id = aws_vpc.cluster.id
-
-  tags = {
-    Name = "NATSG"
-  }
-}
-
 resource "aws_security_group" "private_instance" {
   name        = "private_instance"
   description = "Security group that allows public subnet ingress to private instances on HTTP and HTTPS."
